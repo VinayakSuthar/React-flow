@@ -12,21 +12,32 @@ import ReactFlow, {
 import "reactflow/dist/style.css";
 import Sidebar from "./components/sidebar";
 import CustomNode from "./components/custom-node";
-
-let uuid = 0;
+import { cn } from "./utils";
 
 function getId() {
-  return `node_${uuid++}`;
+  return `node_${Date.now()}`;
 }
 
 const nodeTypes = {
   custom: CustomNode,
 };
 
+const statusMap = {
+  success: "Changes saved successfully",
+  error: "Cannot save flow",
+};
+
+const statusVariant = {
+  success: "bg-green-200",
+  error: "bg-red-200",
+};
+
 export default function App() {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [status, setStatus] = useState("");
+  let timeoutId;
 
   const onConnect = useCallback(
     (params) => {
@@ -62,27 +73,68 @@ export default function App() {
     [reactFlowInstance, nodes]
   );
 
+  const handleSave = () => {
+    clearTimeout(timeoutId);
+    let i = 0;
+    let nodesWithEmptyTargetHandle = 0;
+
+    while (i < nodes.length && nodesWithEmptyTargetHandle < 2) {
+      const node = nodes[i];
+      const target = edges.find((edge) => edge.target === node.id);
+      if (!target) {
+        nodesWithEmptyTargetHandle++;
+      }
+      i++;
+    }
+    setStatus(nodesWithEmptyTargetHandle > 1 ? "error" : "success");
+    timeoutId = setTimeout(() => {
+      setStatus("");
+    }, 3000);
+  };
+
   return (
-    <div className="flex h-screen">
-      <div className="flex-1">
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onInit={setReactFlowInstance}
-          nodeTypes={nodeTypes}
+    <div className="h-screen">
+      <div className="px-3 py-2 border-b-2 flex items-center">
+        <div className="flex-1 flex justify-center">
+          {status && (
+            <p
+              className={cn(
+                "bg-red-200 px-3 py-1 rounded-md",
+                statusVariant[status]
+              )}
+            >
+              {statusMap[status]}
+            </p>
+          )}
+        </div>
+        <button
+          onClick={handleSave}
+          className="text-sm text-blue-700 border-2 border-blue-500 px-3 py-1 rounded-md font-medium"
         >
-          <Panel position="bottom-right" />
-          <Controls />
-          <MiniMap />
-          <Background variant="dots" gap={12} size={1} />
-        </ReactFlow>
+          Save Changes
+        </button>
       </div>
-      <Sidebar />
+      <div className="flex h-full">
+        <div className="flex-1">
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            onInit={setReactFlowInstance}
+            nodeTypes={nodeTypes}
+          >
+            <Panel position="bottom-right" />
+            <Controls />
+            <MiniMap />
+            <Background variant="dots" gap={12} size={1} />
+          </ReactFlow>
+        </div>
+        <Sidebar />
+      </div>
     </div>
   );
 }
