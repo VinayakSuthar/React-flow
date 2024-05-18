@@ -13,8 +13,10 @@ import "reactflow/dist/style.css";
 import Sidebar from "./components/sidebar";
 import CustomNode from "./components/custom-node";
 
+let uuid = 0;
+
 function getId() {
-  return crypto.randomUUID();
+  return `node_${uuid++}`;
 }
 
 const nodeTypes = {
