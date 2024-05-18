@@ -1,6 +1,8 @@
+import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
+
 export default function Sidebar() {
   function handleDragStart(event) {
-    event.dataTransfer.setData("application/reactflow", "add-node");
+    event.dataTransfer.setData("application/reactflow", "custom");
     event.dataTransfer.effectAllowed = "move";
   }
 
@@ -9,8 +11,9 @@ export default function Sidebar() {
       <div
         onDragStart={handleDragStart}
         draggable
-        className={`border cursor-grab bg-white border-blue-400 rounded h-[100px] flex justify-center items-center text-blue-400`}
+        className={`border cursor-grab bg-white border-blue-400 rounded h-[100px] flex flex-col justify-center items-center text-blue-400`}
       >
+        <ChatBubbleOvalLeftEllipsisIcon className="size-6" />
         Message
       </div>
     </aside>

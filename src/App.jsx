@@ -11,24 +11,25 @@ import ReactFlow, {
 
 import "reactflow/dist/style.css";
 import Sidebar from "./components/sidebar";
-
-const initialNodes = [
-  { id: "1", position: { x: 0, y: 0 }, data: { label: "1" } },
-  { id: "2", position: { x: 0, y: 100 }, data: { label: "2" } },
-];
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+import CustomNode from "./components/custom-node";
 
 function getId() {
   return crypto.randomUUID();
 }
 
+const nodeTypes = {
+  custom: CustomNode,
+};
+
 export default function App() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) => {
+      setEdges((eds) => addEdge(params, eds));
+    },
     [setEdges]
   );
 
@@ -41,13 +42,15 @@ export default function App() {
     (event) => {
       event.preventDefault();
 
+      const type = event.dataTransfer.getData("application/reactflow");
+
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
       const newNode = {
         id: getId(),
-        // type,
+        type,
         position,
         data: { label: `test node ${nodes.length + 1}` },
       };
@@ -69,6 +72,7 @@ export default function App() {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           onInit={setReactFlowInstance}
+          nodeTypes={nodeTypes}
         >
           <Panel position="bottom-right" />
           <Controls />
