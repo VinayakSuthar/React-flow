@@ -16,8 +16,14 @@ const CustomNode = memo(function CustomNode({ data, selected }) {
   const isHandleConnectable = useMemo(() => {
     const node = nodeInternals.get(nodeId);
     const connectedEdges = getConnectedEdges([node], edges);
+    let count = 0;
+    for (let edge of connectedEdges) {
+      if (edge.source === nodeId) {
+        count++;
+      }
+    }
 
-    return connectedEdges.length < 1;
+    return count < 1;
   }, [edges, nodeId, nodeInternals]);
 
   return (
