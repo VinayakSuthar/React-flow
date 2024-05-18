@@ -3,6 +3,13 @@ import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
 import { useOnSelectionChange, useReactFlow } from "reactflow";
 
+const nodeTypes = [
+  {
+    type: "text-node",
+    label: "Message",
+  },
+];
+
 export default function Sidebar() {
   const { setNodes } = useReactFlow();
   const [selectedNode, setSelectedNode] = useState(null);
@@ -39,8 +46,8 @@ export default function Sidebar() {
     );
   }
 
-  function handleDragStart(event) {
-    event.dataTransfer.setData("application/reactflow", "custom");
+  function handleDragStart(event, type) {
+    event.dataTransfer.setData("application/reactflow", type);
     event.dataTransfer.effectAllowed = "move";
   }
 
@@ -52,14 +59,17 @@ export default function Sidebar() {
     <aside className="border-l-2 w-[400px]">
       {!selectedNode && (
         <div className="grid grid-cols-2 gap-3 p-3">
-          <div
-            onDragStart={handleDragStart}
-            draggable
-            className={`border cursor-grab bg-white border-blue-400 rounded h-[100px] flex flex-col justify-center items-center text-blue-400`}
-          >
-            <ChatBubbleOvalLeftEllipsisIcon className="size-6" />
-            Message
-          </div>
+          {nodeTypes.map(({ type, label }) => (
+            <div
+              key={type}
+              onDragStart={(e) => handleDragStart(e, type)}
+              draggable
+              className={`border cursor-grab bg-white border-blue-400 rounded h-[100px] flex flex-col justify-center items-center text-blue-400 p-3`}
+            >
+              <ChatBubbleOvalLeftEllipsisIcon className="size-6" />
+              {label}
+            </div>
+          ))}
         </div>
       )}
       {selectedNode && (

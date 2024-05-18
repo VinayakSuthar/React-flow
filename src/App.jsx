@@ -11,7 +11,7 @@ import ReactFlow, {
 
 import "reactflow/dist/style.css";
 import Sidebar from "./components/sidebar";
-import CustomNode from "./components/custom-node";
+import TextNode from "./components/text-node";
 import { cn } from "./utils";
 
 function getId() {
@@ -19,7 +19,7 @@ function getId() {
 }
 
 const nodeTypes = {
-  custom: CustomNode,
+  "text-node": TextNode,
 };
 
 const statusMap = {
@@ -57,9 +57,10 @@ export default function App() {
 
       const type = event.dataTransfer.getData("application/reactflow");
 
+      // Adjusting the position by adding half of the node's width and height to center the node
       const position = reactFlowInstance.screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
+        x: event.clientX - 75,
+        y: event.clientY - 33,
       });
       const newNode = {
         id: getId(),
@@ -74,7 +75,6 @@ export default function App() {
   );
 
   const handleSave = () => {
-    clearTimeout(timeoutId);
     let i = 0;
     let nodesWithEmptyTargetHandle = 0;
 
@@ -86,7 +86,11 @@ export default function App() {
       }
       i++;
     }
+
     setStatus(nodesWithEmptyTargetHandle > 1 ? "error" : "success");
+    // Clear previous timeout
+    clearTimeout(timeoutId);
+    // Clear status message after 3 seconds
     timeoutId = setTimeout(() => {
       setStatus("");
     }, 3000);

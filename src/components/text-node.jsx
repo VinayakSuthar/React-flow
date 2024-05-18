@@ -9,7 +9,7 @@ import {
 } from "reactflow";
 import { cn } from "../utils";
 
-const CustomNode = memo(function CustomNode({ data, selected }) {
+const TextNode = memo(function CustomNode({ data, selected }) {
   const nodeId = useNodeId();
   const { nodeInternals, edges } = useStore();
 
@@ -17,12 +17,15 @@ const CustomNode = memo(function CustomNode({ data, selected }) {
     const node = nodeInternals.get(nodeId);
     const connectedEdges = getConnectedEdges([node], edges);
     let count = 0;
+
+    // counting the number of edges connected to the source handle
     for (let edge of connectedEdges) {
       if (edge.source === nodeId) {
         count++;
       }
     }
 
+    // if the number of edges connected to the source handle is less than 1, it is connectable
     return count < 1;
   }, [edges, nodeId, nodeInternals]);
 
@@ -48,4 +51,4 @@ const CustomNode = memo(function CustomNode({ data, selected }) {
   );
 });
 
-export default CustomNode;
+export default TextNode;
