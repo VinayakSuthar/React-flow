@@ -2,6 +2,10 @@
 
 This is a sample React application that demonstrates the usage of React Flow library.
 
+## Demo
+
+You can find a live demo of this project [here](https://r-flow-builder.vercel.app/).
+
 ## Getting Started
 
 To get started with this project, follow these steps:
@@ -19,10 +23,6 @@ To get started with this project, follow these steps:
 - **Target Handle**: Target of a connecting edge. Can have more than one edge connecting to a target handle.
 - **Settings Panel**: Settings Panel will replace the Nodes Panel when a Node is selected. It has a text field to edit text of the selected Text Node.
 - **Save Button**: Button to save the flow. Save button press will show an error if there are more than one Nodes and more than one Node has empty target handles.
-
-## Demo
-
-You can find a live demo of this project [here](https://r-flow-builder.vercel.app/).
 
 ## Contributing
 
